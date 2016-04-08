@@ -7,9 +7,9 @@ Vendor: www.mongodb.org
 Website: http://www.mongodb.org/
 Display-Name: MongoDB 3.2.4
 Cartridge-Short-Name: MONGODB
-Cartridge-Version: '2.0.2'
-Cartridge-Vendor: icflorescu
-Source-Url: https://github.com/icflorescu/openshift-cartridge-mongodb.git
+Cartridge-Version: '1.0.0'
+Cartridge-Vendor: joevin22
+Source-Url: https://github.com/joevin22/openshift-cartridge-mongodb.git
 Categories:
 - service
 - database
@@ -17,9 +17,25 @@ Categories:
 - embedded
 Help-Topics:
   MongoDB Manual: http://docs.mongodb.org/manual/
+  Building with MongoDB: https://www.openshift.com/developers/mongodb
 Provides:
 - mongodb
+- mongodb-basic-mode
 
+Cart-Data:
+- Key: username
+  Type: cart_data
+  Description: Root user on mongo database
+- Key: password
+  Type: cart_data
+  Description: Password for root user on mongo database
+- Key: database_name
+  Type: cart_data
+  Description: Mongo DB name
+- Key: connection_url
+  Type: cart_data
+  Description: Mongo DB connection URL
+  
 Scaling:
   Min: 1
   Max: 1
@@ -29,9 +45,9 @@ Publishes:
     Type: ENV:NET_TCP:nosqldb:connection-info
 
 Endpoints:
-- Private-IP-Name: IP
-  Private-Port-Name: PORT
+- Private-IP-Name: DB_HOST
+  Private-Port-Name: DB_PORT
   Private-Port: 27017
-  Public-Port-Name: PROXY_PORT
+  Public-Port-Name: DB_PROXY_PORT
   Protocols:
   - mongodb

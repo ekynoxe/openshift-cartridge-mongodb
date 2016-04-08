@@ -2,6 +2,8 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
+auth="-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
+
 function is_running() {
   if [ ! -z "$(ps -ef | grep 'mongod --nounixsocket' | grep -v grep)" ]; then
     return 0
@@ -15,14 +17,11 @@ function start() {
     client_result 'MongoDB is already running.'
   else
     client_message 'Starting MongoDB...'
-    nohup ${OPENSHIFT_DATA_DIR}.mongodb/bin/mongod \
-      --nounixsocket                               \
-      --storageEngine wiredTiger                   \
-      --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data  \
-      --bind_ip $OPENSHIFT_MONGODB_IP              \
-      --quiet                                      \
-      --logRotate reopen                           \
-      --logappend                                  \
+    nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod          \
+      $auth                                                 \
+      --config ${OPENSHIFT_MONGODB_DIR}/conf/mongodb.conf   \
+      --logRotate reopen                                    \
+      --logappend                                           \
       |& /usr/bin/logshifter -tag mongodb &
     i=0
     while ! is_running && [ $i -lt 60 ]; do
@@ -43,7 +42,7 @@ function stop() {
       client_result 'MongoDB is already stopped.'
   else
     client_message 'Stopping MongoDB...'
-    kill "$(ps -ef | grep 'mongod --nounixsocket' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
+    kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
     i=0
     while is_running && [ $i -lt 60 ]; do
       sleep 1
