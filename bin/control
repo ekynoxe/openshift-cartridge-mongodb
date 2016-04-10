@@ -13,13 +13,14 @@ function is_running() {
 }
 
 bin_mongo=${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod
-conf_mongo=${OPENSHIFT_MONGODB_DIR}/conf/mongodb.conf
+conf_mongo=${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf
 
 function start() {
   if is_running; then
     client_result 'MongoDB is already running.'
   else
-    client_message 'Starting MongoDB...'
+    client_message 'Starting MongoDB ...'
+    client_message $auth
     client_message $bin_mongo
     client_message $conf_mongo
     nohup $bin_mongo $auth --config $conf_mongo --logRotate reopen --logappend                                           \
