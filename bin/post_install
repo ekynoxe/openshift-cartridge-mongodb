@@ -2,6 +2,8 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
+client_message 'POST INSTALL'
+
 password=$OPENSHIFT_MONGODB_DB_PASSWORD
 echo "use admin
       db.addUser(\"admin\", \"${password}\")
