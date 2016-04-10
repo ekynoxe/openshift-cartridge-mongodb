@@ -12,16 +12,17 @@ function is_running() {
   fi
 }
 
+bin_mongo=${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod
+conf_mongo=${OPENSHIFT_MONGODB_DIR}/conf/mongodb.conf
+
 function start() {
   if is_running; then
     client_result 'MongoDB is already running.'
   else
     client_message 'Starting MongoDB...'
-    nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod          \
-      $auth                                                 \
-      --config ${OPENSHIFT_MONGODB_DIR}/conf/mongodb.conf   \
-      --logRotate reopen                                    \
-      --logappend                                           \
+    client_message $bin_mongo
+    client_message $conf_mongo
+    nohup $bin_mongo $auth --config $conf_mongo --logRotate reopen --logappend                                           \
       |& /usr/bin/logshifter -tag mongodb &
     i=0
     while ! is_running && [ $i -lt 60 ]; do
