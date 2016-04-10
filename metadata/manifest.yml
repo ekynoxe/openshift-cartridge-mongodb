@@ -9,7 +9,7 @@ Display-Name: MongoDB 3.2.4
 Cartridge-Short-Name: MONGODB
 Cartridge-Version: '1.0.0'
 Cartridge-Vendor: joevin22
-Source-Url: https://github.com/joevin22/openshift-cartridge-mongodb.git
+Source-Url: https://github.com/joevin22/openshift-cartridge-mongodb
 Categories:
 - service
 - database
@@ -21,7 +21,6 @@ Help-Topics:
 Provides:
 - mongodb
 - mongodb-basic-mode
-
 Cart-Data:
 - Key: username
   Type: cart_data
@@ -35,15 +34,12 @@ Cart-Data:
 - Key: connection_url
   Type: cart_data
   Description: Mongo DB connection URL
-  
 Scaling:
   Min: 1
   Max: 1
-
 Publishes:
   publish-nosql-db-connection-info:
     Type: ENV:NET_TCP:nosqldb:connection-info
-
 Endpoints:
 - Private-IP-Name: DB_HOST
   Private-Port-Name: DB_PORT
