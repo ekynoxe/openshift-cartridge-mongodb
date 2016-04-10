@@ -16,7 +16,6 @@ fi
 
 # Download
 client_message 'DOWNLOADING ...'
-client_message ${OPENSHIFT_DATA_DIR}tmp.tgz http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${2}.tgz
 curl -L -o ${OPENSHIFT_DATA_DIR}tmp.tgz http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${2}.tgz
 
 # Create bin directory if necessary
@@ -44,7 +43,7 @@ client_message 'Generating username and password'
 
 # Generate password
 # date +%s | sha256sum | base64 | head -c 64 ; echo
-password= `date +%s | sha256sum | base64 | head -c 64 ; echo`
+password = date +%s | sha256sum | base64 | head -c 64 ; echo
 
 echo "admin" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME
 echo "$password" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD
