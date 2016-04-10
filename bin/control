@@ -23,7 +23,7 @@ function start() {
     client_message $auth
     client_message $bin_mongo
     client_message $conf_mongo
-    nohup $bin_mongo --config $conf_mongo --logRotate reopen --logappend                                           \
+    nohup $bin_mongo --config $conf_mongo --logRotate reopen --logappend --storageEngine wiredTiger                                           \
       |& /usr/bin/logshifter -tag mongodb &
     i=0
     while ! is_running && [ $i -lt 60 ]; do

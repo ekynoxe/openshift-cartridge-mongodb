@@ -2,6 +2,8 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
+client_message 'INSTALL'
+
 if [[ "${OPENSHIFT_APP_NAME}" =~ ^[0-9] ]]; then
   client_error ""
   client_error "Unable to add MongoDB cartridge to your application because"
@@ -13,6 +15,7 @@ if [[ "${OPENSHIFT_APP_NAME}" =~ ^[0-9] ]]; then
 fi
 
 # Download
+client_message 'DOWNLOADING ...'
 curl -L -o ${OPENSHIFT_DATA_DIR}tmp.tgz http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${2}.tgz
 
 # Create bin directory if necessary
