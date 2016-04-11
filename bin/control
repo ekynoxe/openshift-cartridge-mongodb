@@ -23,7 +23,14 @@ function start() {
     client_message $auth
     client_message $bin_mongo
     client_message $conf_mongo
-    nohup $bin_mongo --config $conf_mongo --logRotate reopen --logappend --storageEngine wiredTiger                                           \
+    nohup $bin_mongo \
+        --nounixsocket                               \
+      --storageEngine wiredTiger                   \
+      --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data  \
+      --bind_ip $OPENSHIFT_MONGODB_IP              \
+      --quiet                                      \
+      --logRotate reopen                           \
+      --logappend                                  \                                        \
       |& /usr/bin/logshifter -tag mongodb &
     i=0
     while ! is_running && [ $i -lt 60 ]; do
