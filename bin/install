@@ -43,8 +43,8 @@ client_message 'Generating username and password'
 
 # Generate password
 # date +%s | sha256sum | base64 | head -c 64 ; echo
-password = date +%s | sha256sum | base64 | head -c 64
-#password=$(generate_password)
+#password = date +%s | sha256sum | base64 | head -c 64
+password=$(generate_password)
 
 echo "admin" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME
 echo "$password" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD
