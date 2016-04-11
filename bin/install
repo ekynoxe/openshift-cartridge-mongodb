@@ -60,6 +60,6 @@ client_result "   Root User:     admin"
 client_result "   Root Password: $password"
 client_result "   Database Name: $OPENSHIFT_APP_NAME"
 client_result ""
-client_result 'Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/'
+client_result "Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/"
 
 client_message 'END INSTALL'
