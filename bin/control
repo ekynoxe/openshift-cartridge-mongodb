@@ -21,8 +21,8 @@ function start() {
   else
     client_message 'Starting MongoDB ...'
     client_message $auth
-    client_message $bin_mongo
-    client_message $conf_mongo
+    client_message $OPENSHIFT_MONGODB_DB_USERNAME
+    client_message $OPENSHIFT_MONGODB_DB_PASSWORD
     nohup $bin_mongo \
         --nounixsocket                               \
         --storageEngine wiredTiger                   \
