@@ -8,11 +8,12 @@ client_message 'IP $OPENSHIFT_MONGODB_IP'
 
 password=$OPENSHIFT_MONGODB_DB_PASSWORD
 url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
+
 nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
+        --config ${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf  \
         --nounixsocket                                \
         --storageEngine wiredTiger                    \
-        --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data   \
-        --bind_ip $OPENSHIFT_MONGODB_IP               \
+        --bind_ip $OPENSHIFT_MONGODB_DB_HOST          \
         |& /usr/bin/logshifter -tag mongodb &
 
 sleep 2

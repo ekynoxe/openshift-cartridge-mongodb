@@ -10,7 +10,7 @@ storage:
    mmapv1:
       smallFiles: true
 processManagement:
-   fork: true
+   fork: false
    pidFilePath: <%= ENV['OPENSHIFT_MONGODB_DIR'] %>pid/mongodb.pid
 net:
    bindIp: <%= ENV['OPENSHIFT_MONGODB_DB_HOST'] %>

@@ -108,7 +108,7 @@ function start() {
         --config ${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf  \
         --nounixsocket                                \
         --storageEngine wiredTiger                    \
-        --bind_ip $OPENSHIFT_MONGODB_IP               \
+        --bind_ip $OPENSHIFT_MONGODB_DB_HOST               \
         $authopts                                     \
       |& /usr/bin/logshifter -tag mongodb &
       
