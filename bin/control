@@ -138,7 +138,15 @@ function stop() {
       client_result 'MongoDB is already stopped.'
   else
     client_message 'Stopping MongoDB...'
+    if [ -f $OPENSHIFT_MONGODB_DIR/pid/mongodb.pid ]; then
+        set +e
+        pid=$( /bin/cat $OPENSHIFT_MONGODB_DIR/pid/mongodb.pid 2>/dev/null )
+        set -e
+    fi
+    
     kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
+    /bin/rm -f $OPENSHIFT_MONGODB_DIR/pid/mongodb.pid
+    
     i=0
     while isrunning && [ $i -lt 60 ]; do
       sleep 1
