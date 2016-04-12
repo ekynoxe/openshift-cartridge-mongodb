@@ -24,7 +24,6 @@ echo "use admin
       db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ { role: \"readWrite\", db: \"$OPENSHIFT_APP_NAME\" }, \"readWrite\", \"dbAdmin\" ] })
       exit      
       " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo ${OPENSHIFT_MONGODB_DB_HOST}
-
 rm -f /tmp/.dbshell
 
 cart_props "connection_url=mongodb://\$OPENSHIFT_MONGODB_DB_HOST:\$OPENSHIFT_MONGODB_DB_PORT/"
