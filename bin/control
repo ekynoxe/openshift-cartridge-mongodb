@@ -8,7 +8,7 @@ conf_mongo=${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf
 function mongo_client() {
   url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/admin"
   auth="-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
-  nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo ${url} ${auth} &
+  nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo ${url} ${auth} >/dev/null 2>&1 
 }
 
 
@@ -35,12 +35,12 @@ function start() {
     client_result 'MongoDB is already running.'
   else
     client_message 'Starting MongoDB ...'
-    client_message "${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/admin"
-    client_message "-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
+    #client_message "${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/admin"
+    #client_message "-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
 
     authopts=${1:-"--auth"}
     nohup $bin_mongo \
-        $authopts \
+        #$authopts \
         --nounixsocket                               \
         --storageEngine wiredTiger                   \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data  \
