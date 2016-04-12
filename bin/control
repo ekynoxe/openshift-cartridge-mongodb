@@ -2,9 +2,25 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-#auth='-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}'
 bin_mongo=${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod
 conf_mongo=${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf
+
+function mongo_client() {
+  url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/admin"
+  auth="-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
+  nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo ${url} ${auth}
+}
+
+
+function _wait_for_mongod_to_startup() {
+    i=0
+    while (! echo "exit" | mongo_client > /dev/null 2>&1) \
+             && [ $i -lt 60 ]; do
+        echo "Waiting for mongo to start..."
+        sleep 1
+        i=$(($i + 1))
+    done
+}
 
 function is_running() {
   if [ ! -z "$(ps -ef | grep 'mongod --nounixsocket' | grep -v grep)" ]; then
@@ -22,10 +38,9 @@ function start() {
     #client_message $auth
     client_message $OPENSHIFT_MONGODB_DB_USERNAME
     client_message $OPENSHIFT_MONGODB_DB_PASSWORD
+    authopts=${1:-"--auth"}
     nohup $bin_mongo \
-        -u $OPENSHIFT_MONGODB_DB_USERNAME \
-        -p $OPENSHIFT_MONGODB_DB_PASSWORD \
-        --port $OPENSHIFT_MONGODB_DB_PORT \
+        $authopts
         --nounixsocket                               \
         --storageEngine wiredTiger                   \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data  \
@@ -34,6 +49,7 @@ function start() {
         --logRotate reopen                           \
         --logappend                                  \                                        \
       |& /usr/bin/logshifter -tag mongodb &
+    _wait_for_mongod_to_startup
     i=0
     while ! is_running && [ $i -lt 60 ]; do
       sleep 1
