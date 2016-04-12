@@ -6,7 +6,15 @@ client_message 'POST INSTALL'
 
 password=$OPENSHIFT_MONGODB_DB_PASSWORD
 url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/admin"
+nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
+        --nounixsocket                                \
+        --storageEngine wiredTiger                    \
+        --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data   \
+        --bind_ip $OPENSHIFT_MONGODB_IP               \
+        |& /usr/bin/logshifter -tag mongodb &
 
+sleep 5
+     
 echo "use admin
       db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ \"readWrite\", \"dbAdmin\" ] })
       db.auth(\"admin\", \"${password}\")
@@ -19,6 +27,9 @@ echo "use admin
       
 rm -f /tmp/.dbshell
 
+kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
+
+sleep 5
 
 cart_props "connection_url=mongodb://${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
 cart_props "username=admin"

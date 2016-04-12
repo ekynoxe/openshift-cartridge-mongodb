@@ -103,9 +103,10 @@ function start() {
     client_result 'MongoDB is already running.'
   else
     client_message 'Starting MongoDB ...'
-    client_message $bin_mongo
-    
+    //client_message $bin_mongo
+    authopts=${1:-"--auth"}
     nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
+        $authopts                                     \
         --nounixsocket                                \
         --storageEngine wiredTiger                    \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data   \
