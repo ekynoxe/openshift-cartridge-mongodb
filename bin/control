@@ -38,9 +38,9 @@ function start() {
     #client_message "-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
 
     authopts=${1:-"--auth"}
-        #$authopts \
+    #$authopts \
+    #    --auth                                       \
     nohup $bin_mongo \
-        --auth                                       \
         --nounixsocket                               \
         --storageEngine wiredTiger                   \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data  \
