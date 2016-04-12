@@ -2,22 +2,23 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-client_message 'POST INSTALL'
+client_message "POST INSTALL"
 client_message $OPENSHIFT_MONGODB_DB_HOST
 client_message $OPENSHIFT_MONGODB_DB_PASSWORD
 client_message $OPENSHIFT_APP_NAME
 client_message $OPENSHIFT_MONGODB_DIR
+client_message `${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $OPENSHIFT_MONGODB_DB_HOST`
 
 password=$OPENSHIFT_MONGODB_DB_PASSWORD
-#echo "use admin
-#      db.addUser(\"admin\", \"${password}\")
-#      db.auth(\"admin\", \"${password}\")
-#      db.system.users.find()
-#      use $OPENSHIFT_APP_NAME
-#      db.openshift.save({application: \"$OPENSHIFT_APP_NAME\", dbhost: \"$OPENSHIFT_MONGODB_DB_HOST\" })
-#      db.addUser(\"admin\", \"${password}\")
-#      exit
-#     "  | `${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo OPENSHIFT_MONGODB_DB_HOST`
+echo "use admin
+      db.addUser(\"admin\", \"${password}\")
+      db.auth(\"admin\", \"${password}\")
+      db.system.users.find()
+      use $OPENSHIFT_APP_NAME
+      db.openshift.save({application: \"$OPENSHIFT_APP_NAME\", dbhost: \"$OPENSHIFT_MONGODB_DB_HOST\" })
+      db.addUser(\"admin\", \"${password}\")
+      exit
+     "  | `${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $OPENSHIFT_MONGODB_DB_HOST`
 rm -f /tmp/.dbshell
 
 cart_props "connection_url=mongodb://\$OPENSHIFT_MONGODB_DB_HOST:\$OPENSHIFT_MONGODB_DB_PORT/"
