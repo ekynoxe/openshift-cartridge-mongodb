@@ -16,27 +16,6 @@ function is_running() {
      return 1
 }
 
-function _repair_mongod() {
-    authopts=$1
-    if is_running ; then
-        echo "Attempting to repair MongoDB ..."
-        
-        echo "use admin
-            db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ \"readWrite\", \"dbAdmin\" ] })
-            db.auth(\"admin\", \"${password}\")
-            db.system.users.find()
-            use $OPENSHIFT_APP_NAME
-            db.openshift.save({application: \"$OPENSHIFT_APP_NAME\", dbhost: \"$OPENSHIFT_MONGODB_DB_HOST\" })
-            db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ { role: \"readWrite\", db: \"$OPENSHIFT_APP_NAME\" }, \"readWrite\", \"dbAdmin\" ] })
-            exit      
-        " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo
-        rm -f /tmp/.dbshell
-        
-    else
-        echo "MongoDB already running - not running repair"
-    fi
-}
-
 function start() {
   if is_running; then
     client_result 'MongoDB is already running.'
