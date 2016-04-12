@@ -105,11 +105,11 @@ function start() {
     client_message 'Starting MongoDB ...'
     authopts=${1:-"--auth"}
     nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
-        $authopts                                     \
+        --config ${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf  \
         --nounixsocket                                \
         --storageEngine wiredTiger                    \
-        --bind_ip $OPENSHIFT_MONGODB_IP                     \
-        --config ${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf  \
+        --bind_ip $OPENSHIFT_MONGODB_IP               \
+        $authopts                                     \
       |& /usr/bin/logshifter -tag mongodb &
       
     i=0
