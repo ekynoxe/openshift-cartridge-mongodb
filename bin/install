@@ -30,6 +30,7 @@ rm ${OPENSHIFT_DATA_DIR}tmp.tgz
 
 # Create data directory if necessary
 mkdir -p ${OPENSHIFT_MONGODB_DIR}.mongodb/data
+mkdir -p ${OPENSHIFT_MONGODB_DIR}logs
 
 # install premade journal
 mkdir -p $OPENSHIFT_MONGODB_DIR/data
