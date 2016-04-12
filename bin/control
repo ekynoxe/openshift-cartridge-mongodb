@@ -56,7 +56,7 @@ function _start_mongod() {
         --quiet                                       \
         --logRotate reopen                            \
         --logappend                                   \
-        run |& /usr/bin/logshifter -tag mongodb &
+       |& /usr/bin/logshifter -tag mongodb &
     _wait_for_mongod_to_startup
     if ! is_running; then
        nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
@@ -67,7 +67,7 @@ function _start_mongod() {
                 --quiet                                       \
                 --logRotate reopen                            \
                 --logappend                                   \
-        run |& /usr/bin/logshifter -tag mongodb &
+       |& /usr/bin/logshifter -tag mongodb &
         
        _repair_mongod "$authopts"
        _wait_for_mongod_to_startup
