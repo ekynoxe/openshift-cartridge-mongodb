@@ -13,7 +13,45 @@ function is_running() {
 function mongo_client() {
   url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/admin"
   auth="-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
-  mongodb_context "mongo ${url} ${auth}"
+  ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $url $auth
+}
+
+function _wait_for_mongod_to_startup() {
+    i=0
+    while (! echo "exit" | mongo_client > /dev/null 2>&1) \
+             && [ $i -lt 60 ]; do
+        echo "Waiting for mongo to start..."
+        sleep 1
+        i=$(($i + 1))
+    done
+}
+
+function _start_mongod() {
+    authopts=${1:-"--auth"}
+     mongodb_context "nohup mongod ${authopts} \
+                    -f ${OPENSHIFT_MONGODB_DIR}/conf/mongodb.conf run" |& /usr/bin/logshifter -tag mongodb &
+    _wait_for_mongod_to_startup
+    if ! isrunning; then
+       _repair_mongod "$authopts"
+       mongodb_context "nohup mongod ${authopts} \
+                       -f ${OPENSHIFT_MONGODB_DIR}/conf/mongodb.conf run" |& /usr/bin/logshifter -tag mongodb &
+       _wait_for_mongod_to_startup
+    fi
+}
+
+function start_mongo() {
+    if ! isrunning
+    then
+        echo "Starting MongoDB cartridge"
+        _start_mongod  "$1"
+
+        if ! isrunning; then
+          client_error "Failed to start MongoDB"
+          exit 1
+        fi
+    else
+        echo "MongoDB already running"
+    fi
 }
 
 bin_mongo=${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod
@@ -91,7 +129,7 @@ function tidy() {
 }
 
 case ${1} in
-  start)   start   ;;
+  start)   start_mongo   ;;
   stop)    stop    ;;
   restart) restart ;;
   status)  status  ;;
