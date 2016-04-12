@@ -2,8 +2,6 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-auth="-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
-
 function is_running() {
   if [ ! -z "$(ps -ef | grep 'mongod --nounixsocket' | grep -v grep)" ]; then
     return 0
@@ -12,6 +10,7 @@ function is_running() {
   fi
 }
 
+auth="-u $OPENSHIFT_MONGODB_DB_USERNAME -p $OPENSHIFT_MONGODB_DB_PASSWORD"
 bin_mongo=${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod
 conf_mongo=${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf
 
@@ -22,7 +21,7 @@ function start() {
     client_message 'Starting MongoDB ...'
     client_message $auth
 
-    nohup $bin_mongo \
+    nohup $bin_mongo                                 \
         --nounixsocket                               \
         --storageEngine wiredTiger                   \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data  \
