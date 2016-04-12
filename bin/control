@@ -40,6 +40,7 @@ function start() {
     authopts=${1:-"--auth"}
         #$authopts \
     nohup $bin_mongo \
+        $authopts \
         --nounixsocket                               \
         --storageEngine wiredTiger                   \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data  \
