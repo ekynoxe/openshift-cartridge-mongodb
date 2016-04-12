@@ -13,7 +13,7 @@ function is_running() {
 function _repair_mongod() {
     authopts=$1
     if is_running ; then
-        client_result "Attempting to repair MongoDB ..."
+        echo "Attempting to repair MongoDB ..."
         
         echo "use admin
             db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ \"readWrite\", \"dbAdmin\" ] })
@@ -23,7 +23,7 @@ function _repair_mongod() {
             db.openshift.save({application: \"$OPENSHIFT_APP_NAME\", dbhost: \"$OPENSHIFT_MONGODB_DB_HOST\" })
             db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ { role: \"readWrite\", db: \"$OPENSHIFT_APP_NAME\" }, \"readWrite\", \"dbAdmin\" ] })
             exit      
-        " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $OPENSHIFT_MONGODB_IP
+        " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo
         rm -f /tmp/.dbshell
         
     else
@@ -53,7 +53,6 @@ function _start_mongod() {
         --nounixsocket                                \
         --storageEngine wiredTiger                    \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data   \
-        --bind_ip $OPENSHIFT_MONGODB_IP               \
         --quiet                                       \
         --logRotate reopen                            \
         --logappend                                   \
