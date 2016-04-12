@@ -22,7 +22,7 @@ nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
         --logappend                                  \
         |& /usr/bin/logshifter -tag mongodb &
 
-sleep 2
+sleep 5
      
 echo "use admin
       db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ \"readWrite\", \"dbAdmin\" ] })
