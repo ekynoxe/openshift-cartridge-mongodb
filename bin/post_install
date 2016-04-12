@@ -20,7 +20,7 @@ echo "use admin
 rm -f /tmp/.dbshell
 
 
-cart_props "connection_url=mongodb://\$OPENSHIFT_MONGODB_DB_HOST:\$OPENSHIFT_MONGODB_DB_PORT/"
+cart_props "connection_url=mongodb://${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
 cart_props "username=admin"
 cart_props "password=${password}"
 cart_props "database_name=$OPENSHIFT_APP_NAME"
