@@ -59,7 +59,7 @@ function _start_mongod() {
         --logappend                                   \
         run |& /usr/bin/logshifter -tag mongodb &
     _wait_for_mongod_to_startup
-    if ! isrunning; then
+    if ! is_running; then
        nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
                 --nounixsocket                                \
                 --storageEngine wiredTiger                    \
@@ -76,12 +76,12 @@ function _start_mongod() {
 }
 
 function start_mongo() {
-    if ! isrunning
+    if ! is_running
     then
         echo "Starting MongoDB cartridge"
         _start_mongod  "$1"
 
-        if ! isrunning; then
+        if ! is_running; then
           client_error "Failed to start MongoDB"
           exit 1
         fi
