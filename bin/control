@@ -167,7 +167,7 @@ function tidy() {
 }
 
 case ${1} in
-  start)   start_mongo   ;;
+  start)   start   ;;
   stop)    stop    ;;
   restart) restart ;;
   status)  status  ;;
