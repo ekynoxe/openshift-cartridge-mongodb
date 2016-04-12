@@ -41,7 +41,7 @@ if [ -e $OPENSHIFT_MONGODB_DIR/usr/journal-cache/journal.tar.gz ]; then
 fi
 
 # generate password and setup env vars
-echo 'Generating username and password'
+#echo 'Generating username and password'
 client_message 'Generating username and password'
 
 # Generate password
@@ -52,8 +52,6 @@ password=$(generate_password)
 echo "admin" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME
 echo "$password" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD
 echo "mongodb://admin:$password@${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_URL
-
-client_message $password
 
 client_result ""
 client_result "MongoDB ${version} database added.  Please make note of these credentials:"

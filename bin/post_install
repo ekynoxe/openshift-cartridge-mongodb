@@ -14,7 +14,7 @@ sleep 1
 
 ${OPENSHIFT_MONGODB_DIR}bin/control start-noauth
 
-sleep 2
+sleep 3
      
 echo "use admin
       db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ \"readWrite\", \"dbAdmin\" ] })
@@ -27,10 +27,6 @@ echo "use admin
       " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $url
       
 rm -f /tmp/.dbshell
-
-kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
-
-sleep 1
 
 cart_props "connection_url=mongodb://${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
 cart_props "username=admin"

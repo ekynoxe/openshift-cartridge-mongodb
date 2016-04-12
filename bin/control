@@ -3,13 +3,6 @@
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 function is_running() {
-  if [ ! -z "$(ps -ef | grep 'mongod' | grep -v grep)" ]; then
-    return 0
-  else
-    return 1
-  fi
-}
-function isrunning() {
     if [ -f $OPENSHIFT_MONGODB_DIR/pid/mongodb.pid ]; then
         set +e
         mongodb_pid=`cat $OPENSHIFT_MONGODB_DIR/pid/mongodb.pid 2> /dev/null`
@@ -44,69 +37,8 @@ function _repair_mongod() {
     fi
 }
 
-function mongo_client() {
-  url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/admin"
-  auth="-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
-  ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $url $auth
-}
-
-function _wait_for_mongod_to_startup() {
-    i=0
-    while (! echo "exit" | mongo_client > /dev/null 2>&1) \
-             && [ $i -lt 60 ]; do
-        echo "Waiting for mongo to start..."
-        sleep 1
-        i=$(($i + 1))
-    done
-}
-
-function _start_mongod() {
-    authopts=${1:-"--auth"}
-    nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod ${authopts} \
-        --config ${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf  \
-        --nounixsocket                                \
-        --storageEngine wiredTiger                    \
-        --bind_ip $OPENSHIFT_MONGODB_DB_HOST          \
-       |& /usr/bin/logshifter -tag mongodb &
-    _wait_for_mongod_to_startup
-    if ! isrunning; then
-       nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
-                --config ${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf  \
-                --nounixsocket                                \
-                --storageEngine wiredTiger                    \
-                --bind_ip $OPENSHIFT_MONGODB_DB_HOST          \
-       |& /usr/bin/logshifter -tag mongodb &
-       
-       sleep 1
-        
-       _repair_mongod "$authopts"
-       _wait_for_mongod_to_startup
-    fi
-}
-
-function start_mongo() {
-    if ! isrunning
-    then
-        echo "Starting MongoDB cartridge"
-        _start_mongod  "$1"
-
-        while ! isrunning && [ $i -lt 60 ]; do
-            sleep 1
-            i=$(($i + 1))
-            _repair_mongod "$authopts"
-        done
-        
-        if ! isrunning; then
-          client_error "Failed to start MongoDB"
-          exit 1
-        fi
-    else
-        echo "MongoDB already running"
-    fi
-}
-
 function start() {
-  if isrunning; then
+  if is_running; then
     client_result 'MongoDB is already running.'
   else
     client_message 'Starting MongoDB ...'
@@ -120,11 +52,11 @@ function start() {
       |& /usr/bin/logshifter -tag mongodb &
       
     i=0
-    while ! isrunning && [ $i -lt 60 ]; do
+    while ! is_running && [ $i -lt 60 ]; do
       sleep 1
       i=$(($i + 1))
     done
-    if isrunning; then
+    if is_running; then
       client_result 'MongoDB started.'
     else
       client_result 'Warning! Could not start MongoDB!'
@@ -134,7 +66,7 @@ function start() {
 }
 
 function stop() {
-  if ! isrunning; then
+  if ! is_running; then
       client_result 'MongoDB is already stopped.'
   else
     client_message 'Stopping MongoDB...'
@@ -148,11 +80,11 @@ function stop() {
     /bin/rm -f $OPENSHIFT_MONGODB_DIR/pid/mongodb.pid
     
     i=0
-    while isrunning && [ $i -lt 60 ]; do
+    while is_running && [ $i -lt 60 ]; do
       sleep 1
       i=$(($i + 1))
     done
-    if isrunning; then
+    if is_running; then
       client_result 'Warning! Could not stop MongoDB!'
       exit 1
     else
@@ -167,7 +99,7 @@ function restart() {
 }
 
 function status() {
-  if isrunning; then
+  if is_running; then
     client_result 'MongoDB appears to be running.'
   else
     client_result 'MongoDB appears to be stopped.'
