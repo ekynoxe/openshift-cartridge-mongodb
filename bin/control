@@ -49,7 +49,7 @@ function start() {
         --logappend                                  \                                        \
       |& /usr/bin/logshifter -tag mongodb &
     
-    _wait_for_mongod_to_startup
+    #_wait_for_mongod_to_startup
     
     i=0
     while ! is_running && [ $i -lt 60 ]; do
