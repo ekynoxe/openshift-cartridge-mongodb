@@ -175,6 +175,7 @@ function tidy() {
 
 case ${1} in
   start)   start   ;;
+  start-noauth) start --noauth ;;
   stop)    stop    ;;
   restart) restart ;;
   status)  status  ;;

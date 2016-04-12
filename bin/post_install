@@ -15,7 +15,7 @@ sleep 1
 nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
         --nounixsocket                                \
         --storageEngine wiredTiger                    \
-        --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data   \
+        --dbpath ${OPENSHIFT_MONGODB_DIR}data   \
         --bind_ip $OPENSHIFT_MONGODB_IP               \
         --quiet                                      \
         --logRotate reopen                           \
@@ -32,7 +32,7 @@ echo "use admin
       db.openshift.save({application: \"$OPENSHIFT_APP_NAME\", dbhost: \"$OPENSHIFT_MONGODB_DB_HOST\" })
       db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ { role: \"readWrite\", db: \"$OPENSHIFT_APP_NAME\" }, \"readWrite\", \"dbAdmin\" ] })
       exit      
-      " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $url
+      " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $OPENSHIFT_MONGODB_DB_HOST
       
 rm -f /tmp/.dbshell
 
