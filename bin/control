@@ -23,9 +23,9 @@ function start() {
     client_message $OPENSHIFT_MONGODB_DB_USERNAME
     client_message $OPENSHIFT_MONGODB_DB_PASSWORD
     nohup $bin_mongo \
-        -u $OPENSHIFT_MONGODB_DB_USERNAME
-        -p $OPENSHIFT_MONGODB_DB_PASSWORD
-        --port $OPENSHIFT_MONGODB_DB_PORT
+        -u $OPENSHIFT_MONGODB_DB_USERNAME \
+        -p $OPENSHIFT_MONGODB_DB_PASSWORD \
+        --port $OPENSHIFT_MONGODB_DB_PORT \
         --nounixsocket                               \
         --storageEngine wiredTiger                   \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data  \
