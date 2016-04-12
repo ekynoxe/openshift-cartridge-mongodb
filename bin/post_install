@@ -10,8 +10,9 @@ password=$OPENSHIFT_MONGODB_DB_PASSWORD
 url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
 
 nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
-        --config ${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf  \
         --nounixsocket                                \
+        --logRotate reopen                            \
+        --logappend                                   \
         --storageEngine wiredTiger                    \
         --bind_ip $OPENSHIFT_MONGODB_DB_HOST          \
         |& /usr/bin/logshifter -tag mongodb &
