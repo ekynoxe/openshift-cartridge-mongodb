@@ -9,16 +9,16 @@ client_message 'IP $OPENSHIFT_MONGODB_IP'
 password=$OPENSHIFT_MONGODB_DB_PASSWORD
 url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
 
+rm ${OPENSHIFT_MONGODB_DIR}pid/mongodb.pid
 kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
 
 sleep 1
 
 nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
         --nounixsocket                                \
-        --logRotate reopen                            \
-        --logappend                                   \
         --storageEngine wiredTiger                    \
-        --bind_ip $OPENSHIFT_MONGODB_DB_HOST          \
+        --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data   \
+        --bind_ip $OPENSHIFT_MONGODB_IP               \
         |& /usr/bin/logshifter -tag mongodb &
 
 sleep 2
