@@ -39,8 +39,8 @@ function start() {
     #client_message "-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
 
     authopts=${1:-"--auth"}
-    nohup $bin_mongo \
         #$authopts \
+    nohup $bin_mongo \
         --nounixsocket                               \
         --storageEngine wiredTiger                   \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data  \
@@ -49,7 +49,7 @@ function start() {
         --logRotate reopen                           \
         --logappend                                  \                                        \
       |& /usr/bin/logshifter -tag mongodb &
-    _wait_for_mongod_to_startup
+    #_wait_for_mongod_to_startup
     i=0
     while ! is_running && [ $i -lt 60 ]; do
       sleep 1
