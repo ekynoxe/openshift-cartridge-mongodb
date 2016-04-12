@@ -3,7 +3,7 @@
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 function is_running() {
-  if [ ! -z "$(ps -ef | grep 'mongod --nounixsocket' | grep -v grep)" ]; then
+  if [ ! -z "$(ps -ef | grep 'mongod' | grep -v grep)" ]; then
     return 0
   else
     return 1
@@ -61,13 +61,13 @@ function _start_mongod() {
     if ! is_running; then
        nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
                 --nounixsocket                                \
-                --storageEngine wiredTiger                    \
                 --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data   \
-                --bind_ip $OPENSHIFT_MONGODB_IP               \
-                --quiet                                       \
+                --storageEngine wiredTiger                    \
                 --logRotate reopen                            \
                 --logappend                                   \
        |& /usr/bin/logshifter -tag mongodb &
+       
+       sleep 1
         
        _repair_mongod "$authopts"
        _wait_for_mongod_to_startup
@@ -80,6 +80,12 @@ function start_mongo() {
         echo "Starting MongoDB cartridge"
         _start_mongod  "$1"
 
+        while ! is_running && [ $i -lt 60 ]; do
+            sleep 1
+            i=$(($i + 1))
+            _repair_mongod "$authopts"
+        done
+        
         if ! is_running; then
           client_error "Failed to start MongoDB"
           exit 1
