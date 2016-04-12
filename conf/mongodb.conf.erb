@@ -14,6 +14,6 @@ processManagement:
    pidFilePath: <%= ENV['OPENSHIFT_MONGODB_DIR'] %>pid/mongodb.pid
 net:
    bindIp: <%= ENV['OPENSHIFT_MONGODB_DB_HOST'] %>
-   port: 27017
+   port: <%= ENV['OPENSHIFT_MONGODB_DB_PORT'] %>
 setParameter:
    enableLocalhostAuthBypass: false
