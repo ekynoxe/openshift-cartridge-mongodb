@@ -28,11 +28,16 @@ echo "use admin
       
 rm -f /tmp/.dbshell
 
+rm ${OPENSHIFT_MONGODB_DIR}pid/mongodb.pid
+kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
+
+sleep 1
+
 cart_props "connection_url=mongodb://${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
 cart_props "username=admin"
 cart_props "password=${password}"
 cart_props "database_name=$OPENSHIFT_APP_NAME"
 
-${OPENSHIFT_MONGODB_DIR}bin/control restart
+${OPENSHIFT_MONGODB_DIR}bin/control start
 
 client_message 'END POST INSTALL'
