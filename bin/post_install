@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash 
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
@@ -16,6 +16,7 @@ echo "use admin
       db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ { role: \"readWrite\", db: \"$OPENSHIFT_APP_NAME\" }, \"readWrite\", \"dbAdmin\" ] })
       exit      
       " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $url
+      
 rm -f /tmp/.dbshell
 
 

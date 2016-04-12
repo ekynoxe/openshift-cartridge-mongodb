@@ -12,7 +12,7 @@ function is_running() {
 
 function _repair_mongod() {
     authopts=$1
-    if ! is_running ; then
+    if is_running ; then
         client_result "Attempting to repair MongoDB ..."
         
         echo "use admin
