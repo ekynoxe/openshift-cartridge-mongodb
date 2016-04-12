@@ -12,17 +12,9 @@ kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/nul
 
 sleep 1
 
-nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
-        --nounixsocket                                \
-        --storageEngine wiredTiger                    \
-        --dbpath ${OPENSHIFT_MONGODB_DIR}data   \
-        --bind_ip $OPENSHIFT_MONGODB_IP               \
-        --quiet                                      \
-        --logRotate reopen                           \
-        --logappend                                  \
-        |& /usr/bin/logshifter -tag mongodb &
+${OPENSHIFT_MONGODB_DIR}bin/control start-noauth
 
-sleep 5
+sleep 2
      
 echo "use admin
       db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ \"readWrite\", \"dbAdmin\" ] })
@@ -37,14 +29,14 @@ echo "use admin
 rm -f /tmp/.dbshell
 
 kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
-sleep 2
-kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
+
+sleep 1
 
 cart_props "connection_url=mongodb://${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
 cart_props "username=admin"
 cart_props "password=${password}"
 cart_props "database_name=$OPENSHIFT_APP_NAME"
 
-# ${OPENSHIFT_MONGODB_DIR}bin/control restart
+${OPENSHIFT_MONGODB_DIR}bin/control restart
 
 client_message 'END POST INSTALL'
