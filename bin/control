@@ -9,6 +9,19 @@ function is_running() {
     return 1
   fi
 }
+function isrunning() {
+    if [ -f $OPENSHIFT_MONGODB_DIR/pid/mongodb.pid ]; then
+        set +e
+        mongodb_pid=`cat $OPENSHIFT_MONGODB_DIR/pid/mongodb.pid 2> /dev/null`
+        set -e
+        myid=`id -u`
+        if `ps --pid $mongodb_pid 2>&1 | grep mongod > /dev/null 2>&1` || `pgrep -x mongod -u $myid > /dev/null 2>&1`
+        then
+            return 0
+        fi
+     fi
+     return 1
+}
 
 function _repair_mongod() {
     authopts=$1
@@ -96,7 +109,7 @@ function start_mongo() {
 }
 
 function start() {
-  if is_running; then
+  if isrunning; then
     client_result 'MongoDB is already running.'
   else
     client_message 'Starting MongoDB ...'
@@ -110,11 +123,11 @@ function start() {
       |& /usr/bin/logshifter -tag mongodb &
       
     i=0
-    while ! is_running && [ $i -lt 60 ]; do
+    while ! isrunning && [ $i -lt 60 ]; do
       sleep 1
       i=$(($i + 1))
     done
-    if is_running; then
+    if isrunning; then
       client_result 'MongoDB started.'
     else
       client_result 'Warning! Could not start MongoDB!'
@@ -124,17 +137,17 @@ function start() {
 }
 
 function stop() {
-  if ! is_running; then
+  if ! isrunning; then
       client_result 'MongoDB is already stopped.'
   else
     client_message 'Stopping MongoDB...'
     kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
     i=0
-    while is_running && [ $i -lt 60 ]; do
+    while isrunning && [ $i -lt 60 ]; do
       sleep 1
       i=$(($i + 1))
     done
-    if is_running; then
+    if isrunning; then
       client_result 'Warning! Could not stop MongoDB!'
       exit 1
     else
@@ -149,7 +162,7 @@ function restart() {
 }
 
 function status() {
-  if is_running; then
+  if isrunning; then
     client_result 'MongoDB appears to be running.'
   else
     client_result 'MongoDB appears to be stopped.'
