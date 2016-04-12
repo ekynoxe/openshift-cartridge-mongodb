@@ -3,11 +3,6 @@
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 client_message "POST INSTALL"
-client_message $OPENSHIFT_MONGODB_DB_HOST
-client_message $OPENSHIFT_MONGODB_DB_PASSWORD
-client_message $OPENSHIFT_APP_NAME
-client_message $OPENSHIFT_MONGODB_DIR
-client_message `${OPENSHIFT_MONGODB_DIR}".mongodb/bin/mongo" $OPENSHIFT_MONGODB_DB_HOST`
 
 password=$OPENSHIFT_MONGODB_DB_PASSWORD
 echo "use admin
@@ -21,9 +16,9 @@ echo "use admin
      "  | `${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo ${OPENSHIFT_MONGODB_DB_HOST}`
 rm -f /tmp/.dbshell
 
-cart_props "connection_url=mongodb://\$OPENSHIFT_MONGODB_DB_HOST:\$OPENSHIFT_MONGODB_DB_PORT/"
+cart_props "connection_url=mongodb://\${OPENSHIFT_MONGODB_DB_HOST}:\${OPENSHIFT_MONGODB_DB_PORT}/"
 cart_props "username=admin"
 cart_props "password=${password}"
 cart_props "database_name=$OPENSHIFT_APP_NAME"
 
-client_message 'END POST INSTALL'
+client_message "END POST INSTALL"
