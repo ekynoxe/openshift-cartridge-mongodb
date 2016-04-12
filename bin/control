@@ -10,7 +10,12 @@ function is_running() {
   fi
 }
 
-auth="-u $OPENSHIFT_MONGODB_DB_USERNAME -p $OPENSHIFT_MONGODB_DB_PASSWORD"
+function mongo_client() {
+  url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/admin"
+  auth="-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
+  mongodb_context "mongo ${url} ${auth}"
+}
+
 bin_mongo=${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod
 conf_mongo=${OPENSHIFT_MONGODB_DIR}conf/mongodb.conf
 
@@ -19,7 +24,6 @@ function start() {
     client_result 'MongoDB is already running.'
   else
     client_message 'Starting MongoDB ...'
-    client_message $auth
 
     nohup $bin_mongo                                 \
         --nounixsocket                               \
@@ -30,6 +34,7 @@ function start() {
         --logRotate reopen                           \
         --logappend                                  \
       |& /usr/bin/logshifter -tag mongodb &
+      
     i=0
     while ! is_running && [ $i -lt 60 ]; do
       sleep 1
