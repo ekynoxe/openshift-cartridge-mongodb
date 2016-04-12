@@ -3,8 +3,6 @@
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 client_message 'POST INSTALL'
-client_message 'DATA ${OPENSHIFT_DATA_DIR}.mongodb/data'
-client_message 'IP $OPENSHIFT_MONGODB_IP'
 
 password=$OPENSHIFT_MONGODB_DB_PASSWORD
 url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
@@ -19,6 +17,9 @@ nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
         --storageEngine wiredTiger                    \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data   \
         --bind_ip $OPENSHIFT_MONGODB_IP               \
+        --quiet                                      \
+        --logRotate reopen                           \
+        --logappend                                  \
         |& /usr/bin/logshifter -tag mongodb &
 
 sleep 2
@@ -43,5 +44,7 @@ cart_props "connection_url=mongodb://${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MO
 cart_props "username=admin"
 cart_props "password=${password}"
 cart_props "database_name=$OPENSHIFT_APP_NAME"
+
+# ${OPENSHIFT_MONGODB_DIR}bin/control restart
 
 client_message 'END POST INSTALL'

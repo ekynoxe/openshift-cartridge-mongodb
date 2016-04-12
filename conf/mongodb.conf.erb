@@ -3,7 +3,7 @@ systemLog:
    quiet: true
    path: <%= ENV['OPENSHIFT_MONGODB_DIR'] %>logs/mongodb.log
    logAppend: true
-   logRotate: 'reopen'
+   logRotate: 'rename'
 storage:
    engine: 'wiredTiger'
    dbPath: <%= ENV['OPENSHIFT_MONGODB_DIR'] %>data/
