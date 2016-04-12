@@ -40,13 +40,14 @@ function start() {
     authopts=${1:-"--auth"}
         #$authopts \
     nohup $bin_mongo \
+        --auth                                       \
         --nounixsocket                               \
         --storageEngine wiredTiger                   \
         --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data  \
         --bind_ip $OPENSHIFT_MONGODB_IP              \
         --quiet                                      \
         --logRotate reopen                           \
-        --logappend                                  \                                        \
+        --logappend                                  \
       |& /usr/bin/logshifter -tag mongodb &
     
     #_wait_for_mongod_to_startup
