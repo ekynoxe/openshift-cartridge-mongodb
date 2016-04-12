@@ -10,6 +10,27 @@ function is_running() {
   fi
 }
 
+function _repair_mongod() {
+    authopts=$1
+    if ! is_running ; then
+        client_result "Attempting to repair MongoDB ..."
+        
+        echo "use admin
+            db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ \"readWrite\", \"dbAdmin\" ] })
+            db.auth(\"admin\", \"${password}\")
+            db.system.users.find()
+            use $OPENSHIFT_APP_NAME
+            db.openshift.save({application: \"$OPENSHIFT_APP_NAME\", dbhost: \"$OPENSHIFT_MONGODB_DB_HOST\" })
+            db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ { role: \"readWrite\", db: \"$OPENSHIFT_APP_NAME\" }, \"readWrite\", \"dbAdmin\" ] })
+            exit      
+        " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $OPENSHIFT_MONGODB_IP
+        rm -f /tmp/.dbshell
+        
+    else
+        echo "MongoDB already running - not running repair"
+    fi
+}
+
 function mongo_client() {
   url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/admin"
   auth="-u ${OPENSHIFT_MONGODB_DB_USERNAME} -p ${OPENSHIFT_MONGODB_DB_PASSWORD}"
@@ -28,13 +49,28 @@ function _wait_for_mongod_to_startup() {
 
 function _start_mongod() {
     authopts=${1:-"--auth"}
-     mongodb_context "nohup mongod ${authopts} \
-                    -f ${OPENSHIFT_MONGODB_DIR}/conf/mongodb.conf run" |& /usr/bin/logshifter -tag mongodb &
+    nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod ${authopts} \
+        --nounixsocket                                \
+        --storageEngine wiredTiger                    \
+        --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data   \
+        --bind_ip $OPENSHIFT_MONGODB_IP               \
+        --quiet                                       \
+        --logRotate reopen                            \
+        --logappend                                   \
+        run |& /usr/bin/logshifter -tag mongodb &
     _wait_for_mongod_to_startup
     if ! isrunning; then
+       nohup ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongod \
+                --nounixsocket                                \
+                --storageEngine wiredTiger                    \
+                --dbpath ${OPENSHIFT_DATA_DIR}.mongodb/data   \
+                --bind_ip $OPENSHIFT_MONGODB_IP               \
+                --quiet                                       \
+                --logRotate reopen                            \
+                --logappend                                   \
+        run |& /usr/bin/logshifter -tag mongodb &
+        
        _repair_mongod "$authopts"
-       mongodb_context "nohup mongod ${authopts} \
-                       -f ${OPENSHIFT_MONGODB_DIR}/conf/mongodb.conf run" |& /usr/bin/logshifter -tag mongodb &
        _wait_for_mongod_to_startup
     fi
 }
