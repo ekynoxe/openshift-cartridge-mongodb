@@ -1,19 +1,14 @@
-#!/bin/bash -e
+#!/bin/bash
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 client_message "POST INSTALL"
 
 password=$OPENSHIFT_MONGODB_DB_PASSWORD
-#echo "use admin
-#      db.addUser(\"admin\", \"${password}\")
-#      db.auth(\"admin\", \"${password}\")
-#      db.system.users.find()
-#      use $OPENSHIFT_APP_NAME
-#      db.openshift.save({application: \"$OPENSHIFT_APP_NAME\", dbhost: \"$OPENSHIFT_MONGODB_DB_HOST\" })
-#      db.addUser(\"admin\", \"${password}\")
-#      exit
-#     "  | `${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo ${OPENSHIFT_MONGODB_DB_HOST}`
+
+client_message "password ${password}"
+client_message "OPENSHIFT_APP_NAME ${OPENSHIFT_APP_NAME}"
+client_message "OPENSHIFT_MONGODB_DB_HOST ${OPENSHIFT_MONGODB_DB_HOST}"
 
 echo "use admin
       db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ \"readWrite\", \"dbAdmin\" ] })
