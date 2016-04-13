@@ -5,6 +5,7 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 client_message 'POST INSTALL'
 
 password=$OPENSHIFT_MONGODB_DB_PASSWORD
+password_admin=$OPENSHIFT_MONGODB_DB_PASSWORD_ADMIN
 url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
 
 rm ${OPENSHIFT_MONGODB_DIR}pid/mongodb.pid
@@ -17,12 +18,12 @@ ${OPENSHIFT_MONGODB_DIR}bin/control start-noauth
 sleep 3
      
 echo "use admin
-      db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ \"readWrite\", \"dbAdmin\" ] })
+      db.createUser({ user: \"admin\", pwd: \"${password_admin}\", roles: [ \"userAdminAnyDatabase\" ] })
       db.auth(\"admin\", \"${password}\")
       db.system.users.find()
       use $OPENSHIFT_APP_NAME
       db.openshift.save({application: \"$OPENSHIFT_APP_NAME\", dbhost: \"$OPENSHIFT_MONGODB_DB_HOST\" })
-      db.createUser({ user: \"admin\", pwd: \"${password}\", roles: [ { role: \"readWrite\", db: \"$OPENSHIFT_APP_NAME\" }, \"readWrite\", \"dbAdmin\" ] })
+      db.createUser({ user: \"user\", pwd: \"${password}\", roles: [ { role: \"readWrite\", db: \"$OPENSHIFT_APP_NAME\" } ] })
       exit      
       " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $url
       
