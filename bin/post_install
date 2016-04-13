@@ -18,7 +18,7 @@ ${OPENSHIFT_MONGODB_DIR}bin/control start-noauth
 sleep 3
      
 echo "use admin
-      db.createUser({ user: \"admin\", pwd: \"${password_admin}\", roles: [ \"userAdminAnyDatabase\" ] })
+      db.createUser({ user: \"admin\", pwd: \"${password_admin}\", roles: [ \"root\" ] })
       db.auth(\"admin\", \"${password}\")
       db.system.users.find()
       use $OPENSHIFT_APP_NAME
