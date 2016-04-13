@@ -24,6 +24,7 @@ mkdir -p ${OPENSHIFT_MONGODB_DIR}.mongodb/bin
 
 # Copy just the mongod binary
 tar -xvzf ${OPENSHIFT_DATA_DIR}tmp.tgz --strip-components=1 -C ${OPENSHIFT_MONGODB_DIR}.mongodb mongodb-linux-x86_64-${2}/bin/mongod
+# mongo's binary will be removing in post_install
 tar -xvzf ${OPENSHIFT_DATA_DIR}tmp.tgz --strip-components=1 -C ${OPENSHIFT_MONGODB_DIR}.mongodb mongodb-linux-x86_64-${2}/bin/mongo
 
 # Remove downloaded archive
@@ -39,5 +40,36 @@ if [ -e $OPENSHIFT_MONGODB_DIR/usr/journal-cache/journal.tar.gz ]; then
     echo 'Unpacking premade journal'
     tar -C $OPENSHIFT_MONGODB_DIR/data -xzf $OPENSHIFT_MONGODB_DIR/usr/journal-cache/journal.tar.gz
 fi
+
+# client_message 'Generating username and password'
+# Generate password
+# password = $(date +%s | sha256sum | base64 | head -c 64)
+username='user'
+password=$(generate_password)
+
+username_admin='admin'
+password_admin=$(generate_password)
+
+# setup env vars 
+echo "$username_admin" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME_ADMIN
+echo "$password_admin" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD_ADMIN
+echo "$username" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME
+echo "$password" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD
+echo "mongodb://$username:$password@${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_URL
+
+# output console : resultat
+client_result ""
+client_result "MongoDB ${version} database added.  Please make note of these credentials:"
+client_result ""
+client_result "Administrator"
+client_result "   Root User:     $username_admin"
+client_result "   Root Password: $password_admin"
+client_result ""
+client_result "User $OPENSHIFT_APP_NAME"
+client_result "   Root User:     $username"
+client_result "   Root Password: $password"
+client_result "   Database Name: $OPENSHIFT_APP_NAME"
+client_result ""
+client_result "Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/"
 
 #client_message 'END INSTALL'

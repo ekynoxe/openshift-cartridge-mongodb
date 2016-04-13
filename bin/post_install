@@ -5,14 +5,11 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 # client_message 'POST INSTALL'
 url="${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
 
-# client_message 'Generating username and password'
-# Generate password
-# password = $(date +%s | sha256sum | base64 | head -c 64)
-username='user'
-password=$(generate_password)
+username=$OPENSHIFT_MONGODB_DB_USERNAME
+password=$OPENSHIFT_MONGODB_DB_PASSWORD
 
-username_admin='admin'
-password_admin=$(generate_password)
+username_admin=$OPENSHIFT_MONGODB_DB_USERNAME_ADMIN
+password_admin=$OPENSHIFT_MONGODB_DB_PASSWORD_ADMIN
 
 # kill && purge mongo started after install script from control bash.
 kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
@@ -47,34 +44,16 @@ rm ${OPENSHIFT_MONGODB_DIR}pid/mongodb.pid
 
 sleep 1
 
-# setup env vars 
-#echo "$username_admin" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME_ADMIN
-#echo "$password_admin" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD_ADMIN
-echo "$username" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME
-echo "$password" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD
-echo "mongodb://$username:$password@${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_URL
-
-# output console : resultat
-client_result ""
-client_result "MongoDB ${version} database added.  Please make note of these credentials:"
-client_result ""
-client_result "Administrator"
-client_result "   Root User:     $username_admin"
-client_result "   Root Password: $password_admin"
-client_result ""
-client_result "User $OPENSHIFT_APP_NAME"
-client_result "   Root User:     $username"
-client_result "   Root Password: $password"
-client_result "   Database Name: $OPENSHIFT_APP_NAME"
-client_result ""
-client_result "Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/"
-
 # define props cartbridge for openshift online
 cart_props "connection_url=mongodb://${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}"
 cart_props "username=${username}"
 cart_props "password=${password}"
 cart_props "database_name=$OPENSHIFT_APP_NAME"
 
+# delete mongo binary, start service with mongod 
+rm ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo
+rm $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME_ADMIN
+rm $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD_ADMIN
 # start service with auth mode
 ${OPENSHIFT_MONGODB_DIR}bin/control start
 
