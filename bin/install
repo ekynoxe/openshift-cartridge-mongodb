@@ -2,8 +2,9 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-client_message 'INSTALL'
+#client_message 'INSTALL'
 
+# test name db
 if [[ "${OPENSHIFT_APP_NAME}" =~ ^[0-9] ]]; then
   client_error ""
   client_error "Unable to add MongoDB cartridge to your application because"
@@ -29,45 +30,14 @@ tar -xvzf ${OPENSHIFT_DATA_DIR}tmp.tgz --strip-components=1 -C ${OPENSHIFT_MONGO
 rm ${OPENSHIFT_DATA_DIR}tmp.tgz
 
 # Create data directory if necessary
-mkdir -p ${OPENSHIFT_MONGODB_DIR}.mongodb/data
+mkdir -p ${OPENSHIFT_MONGODB_DIR}data
 mkdir -p ${OPENSHIFT_MONGODB_DIR}logs
 mkdir -p ${OPENSHIFT_MONGODB_DIR}pid
 
 # install premade journal
-mkdir -p $OPENSHIFT_MONGODB_DIR/data
 if [ -e $OPENSHIFT_MONGODB_DIR/usr/journal-cache/journal.tar.gz ]; then
     echo 'Unpacking premade journal'
     tar -C $OPENSHIFT_MONGODB_DIR/data -xzf $OPENSHIFT_MONGODB_DIR/usr/journal-cache/journal.tar.gz
 fi
 
-# generate password and setup env vars
-#echo 'Generating username and password'
-client_message 'Generating username and password'
-
-# Generate password
-# date +%s | sha256sum | base64 | head -c 64 ; echo
-#password = date +%s | sha256sum | base64 | head -c 64
-password=$(generate_password)
-password_admin=$(generate_password)
-
-echo "admin" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME_ADMIN
-echo "$password_admin" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD_ADMIN
-echo "user" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME
-echo "$password" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD
-echo "mongodb://admin:$password@${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_URL
-
-client_result ""
-client_result "MongoDB ${version} database added.  Please make note of these credentials:"
-client_result ""
-client_result "Administrator"
-client_result "   Root User:     admin"
-client_result "   Root Password: $password_admin"
-client_result ""
-client_result "User $OPENSHIFT_APP_NAME"
-client_result "   Root User:     user"
-client_result "   Root Password: $password"
-client_result "   Database Name: $OPENSHIFT_APP_NAME"
-client_result ""
-client_result "Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/"
-
-client_message 'END INSTALL'
+#client_message 'END INSTALL'
