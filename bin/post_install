@@ -42,6 +42,11 @@ rm -f /tmp/.dbshell
 kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
 rm ${OPENSHIFT_MONGODB_DIR}pid/mongodb.pid
 
+# delete mongo binary, start service with mongod 
+rm ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo
+rm $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME_ADMIN
+rm $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD_ADMIN
+
 sleep 1
 
 # define props cartbridge for openshift online
@@ -50,10 +55,6 @@ cart_props "username=${username}"
 cart_props "password=${password}"
 cart_props "database_name=$OPENSHIFT_APP_NAME"
 
-# delete mongo binary, start service with mongod 
-rm ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo
-rm $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME_ADMIN
-rm $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD_ADMIN
 # start service with auth mode
 ${OPENSHIFT_MONGODB_DIR}bin/control start
 
