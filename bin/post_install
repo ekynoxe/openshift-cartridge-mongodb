@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
@@ -17,7 +17,7 @@ rm ${OPENSHIFT_MONGODB_DIR}pid/mongodb.pid
 
 sleep 1
 
-# start mongo public mode : whithout auth 
+# start mongo public mode : whithout auth
 ${OPENSHIFT_MONGODB_DIR}bin/control start-noauth
 
 sleep 3
@@ -33,17 +33,17 @@ echo "use admin
       use $OPENSHIFT_APP_NAME
       db.openshift.save({application: \"$OPENSHIFT_APP_NAME\", dbhost: \"$OPENSHIFT_MONGODB_DB_HOST\" })
       db.createUser({ user: \"${username}\", pwd: \"${password}\", roles: [ { role: \"readWrite\", db: \"$OPENSHIFT_APP_NAME\" } ] })
-      exit      
+      exit
       " | ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo $url
-      
+
 rm -f /tmp/.dbshell
 
 # kill service mongo
 kill "$(ps -ef | grep 'mongod ' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
 rm ${OPENSHIFT_MONGODB_DIR}pid/mongodb.pid
 
-# delete mongo binary, start service with mongod 
-rm ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo
+# delete mongo binary, start service with mongod
+# rm ${OPENSHIFT_MONGODB_DIR}.mongodb/bin/mongo
 rm $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME_ADMIN
 rm $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD_ADMIN
 

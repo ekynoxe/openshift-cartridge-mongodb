@@ -8,8 +8,8 @@ Website: http://www.mongodb.org/
 Display-Name: MongoDB 3.2.4
 Cartridge-Short-Name: MONGODB
 Cartridge-Version: '1.0.0'
-Cartridge-Vendor: joevin22
-Source-Url: https://github.com/joevin22/openshift-cartridge-mongodb.git
+Cartridge-Vendor: ekynoxe
+Source-Url: https://github.com/ekynoxe/openshift-cartridge-mongodb.git
 Categories:
 - service
 - database

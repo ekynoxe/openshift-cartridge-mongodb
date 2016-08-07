@@ -3,8 +3,8 @@
 ![mongodb-openshift](https://cloud.githubusercontent.com/assets/581999/13374624/f9509bc2-dd92-11e5-8068-a87c9c3f6312.png)
 
 This is a custom OpenShift cartridge providing MongoDB 3.2.x + WiredTiger storage engine.
-This is a fork from icflorescu's cartbridge.
-This integrates variables environment from cartbridge openshift-origins for mongodb.
+This is a fork from joevin22's cartridge, itself a fork from icflorescu's cartridge.
+This integrates variables environment from cartridge openshift-origins for mongodb and installs all mongo binaries.
 
 ## Why
 
@@ -12,7 +12,7 @@ Because the standard OpenShift MongoDB cartridge is stuck at 2.4.
 
 ## When to use
 
-When you need a quick and unsofisticated solution to run your application with the latest MongoDB version.
+When you need a quick and unsophisticated solution to run your application with the latest MongoDB version.
 
 ## How to
 
@@ -20,7 +20,7 @@ When you need a quick and unsofisticated solution to run your application with t
 
 Open your application in the [web console](https://openshift.redhat.com/app/console/applications), go to **"See the list of cartridges you can add"**, paste the URL below in **"Install your own cartridge"** textbox at the bottom of the page and click "Next".
 
-    https://raw.github.com/joevin22/openshift-cartridge-mongodb/master/metadata/manifest.yml
+    https://raw.github.com/ekynoxe/openshift-cartridge-mongodb/master/metadata/manifest.yml
 
 Then you can use `OPENSHIFT_MONGODB_DB_URL` environment variable to connect from an application running in the main web cartridge.
 
@@ -39,7 +39,7 @@ Make sure you have `rhc` installed (see [here](https://developers.openshift.com/
 
 If you want to **add** a MongoDB instance based on this cartridge to an existing application:
 
-    rhc cartridge-add https://raw.githubusercontent.com/joevin22/openshift-cartridge-mongodb/master/metadata/manifest.yml \
+    rhc cartridge-add https://raw.githubusercontent.com/ekynoxe/openshift-cartridge-mongodb/master/metadata/manifest.yml \
       --app appname
 
 ...where `appname` is the name of your application.
@@ -48,13 +48,13 @@ To **create** an app based on the standard Node.js v0.10 cartridge and this one,
 
     rhc app create appname \
       nodejs-0.10 \
-      https://raw.githubusercontent.com/joevin22/openshift-cartridge-mongodb/master/metadata/manifest.yml
+      https://raw.githubusercontent.com/ekynoxe/openshift-cartridge-mongodb/master/metadata/manifest.yml
 
 If you want to use **the latest Node.js version**, you'll have to use a [custom Node.js cartridge](https://github.com/icflorescu/openshift-cartridge-nodejs) as well:
 
     rhc app create appname \
       https://raw.githubusercontent.com/icflorescu/openshift-cartridge-nodejs/master/metadata/manifest.yml \
-      https://raw.githubusercontent.com/joevin22/openshift-cartridge-mongodb/master/metadata/manifest.yml
+      https://raw.githubusercontent.com/ekynoxe/openshift-cartridge-mongodb/master/metadata/manifest.yml
 
 ## Notes
 
@@ -65,9 +65,10 @@ If you want to use **the latest Node.js version**, you'll have to use a [custom 
 ## Sources
 
   * openshift-cartridge-mongodb from icflorescu :  http://github.com/icflorescu/openshift-cartridge-mongodb
+  * openshift-cartridge-mongodb from joevin22 :  https://github.com/joevin22/openshift-cartridge-mongodb
+  * openshift-cartridge-mongodb from simonlopez :  https://github.com/simonlopez/openshift-cartridge-mongodb
   * openshift-cartridge-mongodb from openshift-origins : https://github.com/openshift/origin-server/tree/master/cartridges/openshift-origin-cartridge-mongodb
-  
+
 ## License
 
-The [ISC License](http://github.com/joevin22/openshift-cartridge-mongodb/blob/master/LICENSE).
-
+The [ISC License](http://github.com/ekynoxe/openshift-cartridge-mongodb/blob/master/LICENSE).

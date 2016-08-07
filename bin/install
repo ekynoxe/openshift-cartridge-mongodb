@@ -23,9 +23,9 @@ curl -L -o ${OPENSHIFT_DATA_DIR}tmp.tgz http://fastdl.mongodb.org/linux/mongodb-
 mkdir -p ${OPENSHIFT_MONGODB_DIR}.mongodb/bin
 
 # Copy just the mongod binary
-tar -xvzf ${OPENSHIFT_DATA_DIR}tmp.tgz --strip-components=1 -C ${OPENSHIFT_MONGODB_DIR}.mongodb mongodb-linux-x86_64-${2}/bin/mongod
+tar -xvzf ${OPENSHIFT_DATA_DIR}tmp.tgz --strip-components=1 -C ${OPENSHIFT_MONGODB_DIR}.mongodb mongodb-linux-x86_64-${2}/bin/*
 # mongo's binary will be removing in post_install
-tar -xvzf ${OPENSHIFT_DATA_DIR}tmp.tgz --strip-components=1 -C ${OPENSHIFT_MONGODB_DIR}.mongodb mongodb-linux-x86_64-${2}/bin/mongo
+#tar -xvzf ${OPENSHIFT_DATA_DIR}tmp.tgz --strip-components=1 -C ${OPENSHIFT_MONGODB_DIR}.mongodb mongodb-linux-x86_64-${2}/bin/mongo
 
 # Remove downloaded archive
 rm ${OPENSHIFT_DATA_DIR}tmp.tgz
@@ -50,7 +50,7 @@ password=$(generate_password)
 username_admin='admin'
 password_admin=$(generate_password)
 
-# setup env vars 
+# setup env vars
 echo "$username" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_USERNAME
 echo "$password" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_PASSWORD
 echo "mongodb://$username:$password@${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/" > $OPENSHIFT_MONGODB_DIR/env/OPENSHIFT_MONGODB_DB_URL
